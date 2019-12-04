@@ -11,33 +11,30 @@ import org.junit.Test;
 public class GameTest {
 	
 	/*
-	 * Import Vocab Tests
+	 * Vocab Tests
 	 * */
 	
     @Test
     public void testImportAndSplitSingle() {
     	Asteroid.importVocab("files/one_word_test.txt");
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).firstKey(), "altmodisch");
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).get("altmodisch"), 
-    			"old-fashioned");
+    	Map<String, String> vocab = Asteroid.getVocab();
+    	assertTrue(vocab.containsKey("altmodisch"));
+    	assertEquals(vocab.get("altmodisch"), "old-fashioned");
     	assertEquals(Asteroid.getVocab().size(), 1);
     }
     
     @Test
     public void testImportAndSplitMultiple() {
     	Asteroid.importVocab("files/vocab_test.txt");
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).firstKey(), "beeindrucken");
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).get("beeindrucken"), 
-    			"to impress");
-    	assertTrue(((TreeMap<String, String>) Asteroid.getVocab()).containsKey("begeistert"));
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).get("begeistert"), 
-    			"enthusiastic");
-    	assertTrue(((TreeMap<String, String>) Asteroid.getVocab()).containsKey("beurteilen"));
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).get("beurteilen"), 
-    			"to assess");
-    	assertTrue(((TreeMap<String, String>) Asteroid.getVocab()).containsKey("das Antragsformular"));
-    	assertEquals(((TreeMap<String, String>) Asteroid.getVocab()).get("das Antragsformular"), 
-    			"application form");
+    	Map<String, String> vocab = Asteroid.getVocab();
+    	assertTrue(vocab.containsKey("beeindrucken"));
+    	assertEquals(vocab.get("beeindrucken"), "to impress");
+    	assertTrue(vocab.containsKey("begeistert"));
+    	assertEquals(vocab.get("begeistert"), "enthusiastic");
+    	assertTrue(vocab.containsKey("beurteilen"));
+    	assertEquals(vocab.get("beurteilen"), "to assess");
+    	assertTrue(vocab.containsKey("das Antragsformular"));
+    	assertEquals(vocab.get("das Antragsformular"), "application form");
     	assertEquals(Asteroid.getVocab().size(), 4);
     }
     
@@ -48,6 +45,17 @@ public class GameTest {
     	vocab.clear();
     	assertFalse(vocab.containsKey("beeindrucken"));
     	assertTrue(Asteroid.getVocab().containsKey("beeindrucken"));
+    }
+    
+    @Test
+    public void testGenerateVocab() {
+    	Asteroid.importVocab("files/vocab_test.txt");
+    	Map<String, String> vocab = Asteroid.getVocab();
+    	assertTrue(vocab.containsValue(Asteroid.generateWord()));
+    	assertTrue(vocab.containsValue(Asteroid.generateWord()));
+    	assertTrue(vocab.containsValue(Asteroid.generateWord()));
+    	assertTrue(vocab.containsValue(Asteroid.generateWord()));
+    	assertTrue(vocab.containsValue(Asteroid.generateWord()));
     }
     
     /*

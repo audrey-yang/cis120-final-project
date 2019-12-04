@@ -1,6 +1,6 @@
 =:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 CIS 120 Game Project README
-PennKey: _______
+PennKey: auyang
 =:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 
 ===================
@@ -11,13 +11,13 @@ PennKey: _______
   is an appropriate use of the concept. Incorporate the feedback you got after
   submitting your proposal.
 
-  1.
+  1. Collections.
 
-  2.
+  2. File I/O.
 
-  3.
+  3. Inheritance.
 
-  4.
+  4. Testable Component.
 
 
 =========================

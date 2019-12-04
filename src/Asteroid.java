@@ -35,7 +35,6 @@ public abstract class Asteroid {
     private static Map<String, String> vocab;
     private String word;
     
-
     /**
      * Constructor
      */
@@ -47,12 +46,12 @@ public abstract class Asteroid {
         this.py = py;
         this.width  = width;
         this.height = height;
-        //this.word = word;
 
         // take the width and height into account when setting the bounds for the upper left corner
         // of the object.
         this.maxX = courtWidth - width;
         this.maxY = courtHeight - height;
+        word = generateWord();
     }
 
     /* 
@@ -80,6 +79,10 @@ public abstract class Asteroid {
     
     public int getHeight() {
         return this.height;
+    }
+    
+    public String getWord() {
+    	return this.word;
     }
     
     /* 
@@ -118,12 +121,15 @@ public abstract class Asteroid {
     	}
     }
     
-    public void generateWord() {
-    
+    public static String generateWord() {
+    	List<String> keys = new ArrayList<>(vocab.keySet());
+    	Random r = new Random();
+    	return vocab.get(keys.get(r.nextInt(keys.size())));
+    	//TODO: check this
     }
 
     /*
-     * OTHER METHODS
+     * MOVEMENT and DRAWING METHODS
      * */
 
     /**
@@ -141,10 +147,9 @@ public abstract class Asteroid {
      */
     public void move() {
         this.py += this.vy;
-
-        clip();
+        this.px += this.vx;
+        //clip();
     }
-
 
     /**
      * Default draw method that provides how the object should be drawn in the GUI. This method does
@@ -154,7 +159,5 @@ public abstract class Asteroid {
      * @param g The <code>Graphics</code> context used for drawing the object.
      */
     public abstract void draw(Graphics g);
-    
-    public abstract void vaporize(Graphics g);
 	
 }

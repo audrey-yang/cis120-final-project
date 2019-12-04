@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel {
-
+	
     // the state of the game logic
     private Asteroid asteroid; 
     private int level = 0;
@@ -23,8 +23,8 @@ public class GameCourt extends JPanel {
     private JButton enter;
 
     // Game constants
-    public static final int COURT_WIDTH = 300;
-    public static final int COURT_HEIGHT = 300;
+    public static final int COURT_WIDTH = 1000;
+    public static final int COURT_HEIGHT = 600;
     public static final int SQUARE_VELOCITY = 4;
 
     // Update interval for timer, in milliseconds
@@ -72,11 +72,13 @@ public class GameCourt extends JPanel {
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-        playing = true;
+    	playing = true;
         status.setText("Running...");
         lives = 3;
         level = 0;
-        textBox.setText("");
+        asteroid = new GrayAsteroid(level, COURT_WIDTH, COURT_HEIGHT);
+        
+        //textBox.setText("");
     }
 
     /**
@@ -84,7 +86,7 @@ public class GameCourt extends JPanel {
      */
     void tick() {
         if (playing) {
-
+        	asteroid.move();
             // update the display
             repaint();
         }
@@ -93,6 +95,7 @@ public class GameCourt extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        asteroid.draw(g);
     }
 
     @Override

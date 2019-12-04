@@ -6,15 +6,48 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 public class Game implements Runnable {
 
 	public void run() {
+		login();
+		
+	}
+	
+	public void login() {
+		final JFrame frame = new JFrame("Import File");
+		frame.setLocation(100, 100);
+        frame.setResizable(false);
+        
+        final JLabel label = new JLabel("Enter the file destination.");
+        final JTextField textBox = new JTextField(15);
+        final JButton button = new JButton("Go");
+        button.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+            	Asteroid.importVocab(textBox.getText());
+            }
+        });
+        
+        frame.add(label);
+        frame.add(textBox);
+        frame.add(button);
+        
+        final JLabel status = new JLabel("Running...");
+        final GameCourt court = new GameCourt(status);
+        frame.add(court, BorderLayout.CENTER);
+        
+        //if (!Asteroid.getVocab().isEmpty()) return true;
+        //else return false;
+	}
+	
+	public void runGame() {
 		// Top-level frame in which game components live
         // Be sure to change "TOP LEVEL FRAME" to the name of your game
-        final JFrame frame = new JFrame("TOP LEVEL FRAME");
-        frame.setLocation(300, 300);
+        final JFrame frame = new JFrame("Gravity");
+        frame.setLocation(100, 100);
+        frame.setResizable(false);
 
         // Status panel
         final JPanel status_panel = new JPanel();
@@ -51,6 +84,7 @@ public class Game implements Runnable {
 	}
 	
 	public static void main(String[] args) {
+		Asteroid.importVocab("files/vocab_test.txt");
 		SwingUtilities.invokeLater(new Game());
 	}
 	
