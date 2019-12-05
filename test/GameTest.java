@@ -59,7 +59,15 @@ public class GameTest {
     }
     
     /*
-	 * 
+	 * High Score Tests
 	 * */
+    
+    @Test
+    public void testSetAndGetHighScore() {
+    	Game.setHighScore("Player", 100);
+    	Game.readHighScores();
+    	assertEquals(Game.getHighScore(), 100);
+    	assertEquals(Game.getHighScorer(), "Player");
+    }
 
 }

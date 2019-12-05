@@ -16,10 +16,11 @@ public class GameCourt extends JPanel {
     private Asteroid asteroid; 
     private int level = 0;
     private int lives = 3;
+    private int score = 0;
 
     public boolean playing = false; // whether the game is running 
     private JLabel status; // Current status text, i.e. "Running..."
-    private JTextField textBox;
+    private JTextField userInput;
     private JButton enter;
 
     // Game constants
@@ -30,25 +31,28 @@ public class GameCourt extends JPanel {
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
 
-    public GameCourt(JLabel status/*, JTextField textBox, JButton enter*/) {
+    public GameCourt(JLabel status, JTextField userInput, JButton enter) {
         /* 
          * creates border around the court area, JComponent method 
          * */
     	this.status = status;
-    	/*this.textBox = textBox;
-    	this.enter = enter;*/
+    	this.userInput = userInput;
+    	this.enter = enter;
+    	
     	setBorder(BorderFactory.createLineBorder(Color.BLACK));
         
-        /*enter.addActionListener(new ActionListener() {
+        enter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //Execute when button is pressed
-                if(textBox.getText().equals(asteroid.getWord())){
+                if(userInput.getText().equals(asteroid.getWord())){
                 	//asteroid.vaporize();
+                	System.out.println("yeet");
+                	userInput.setText("");
                 } else {
-                	textBox.setText("");
+                	userInput.setText("");
                 }
             }
-        }); */
+        }); 
 
    
 
@@ -76,6 +80,7 @@ public class GameCourt extends JPanel {
         status.setText("Running...");
         lives = 3;
         level = 0;
+        score = 0;
         asteroid = new GrayAsteroid(level, COURT_WIDTH, COURT_HEIGHT);
         
         //textBox.setText("");
