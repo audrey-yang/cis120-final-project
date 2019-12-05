@@ -2,49 +2,30 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class Game implements Runnable {
 
 	public void run() {
-		login();
+		//get file path
+		boolean okay = false;
 		
-	}
-	
-	public void login() {
-		final JFrame frame = new JFrame("Import File");
-		frame.setLocation(100, 100);
-        frame.setResizable(false);
-        
-        final JLabel label = new JLabel("Enter the file destination.");
-        final JTextField textBox = new JTextField(15);
-        final JButton button = new JButton("Go");
-        button.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-            	Asteroid.importVocab(textBox.getText());
-            }
-        });
-        
-        frame.add(label);
-        frame.add(textBox);
-        frame.add(button);
-        
-        final JLabel status = new JLabel("Running...");
-        final GameCourt court = new GameCourt(status);
-        frame.add(court, BorderLayout.CENTER);
-        
-        //if (!Asteroid.getVocab().isEmpty()) return true;
-        //else return false;
-	}
-	
-	public void runGame() {
+		while (!okay) {
+			String filePath = JOptionPane.showInputDialog(null, "Enter the file path");
+			if (filePath == null) {
+				System.exit(0);
+			}
+			
+			try {
+				Asteroid.importVocab(filePath);
+			} catch (IllegalArgumentException e) {
+				JOptionPane.showMessageDialog(null, "Invalid file path!");
+				continue;
+			}
+			okay = true;
+		}
+		
 		// Top-level frame in which game components live
-        // Be sure to change "TOP LEVEL FRAME" to the name of your game
         final JFrame frame = new JFrame("Gravity");
         frame.setLocation(100, 100);
         frame.setResizable(false);
@@ -77,14 +58,14 @@ public class Game implements Runnable {
         // Put the frame on the screen
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        frame.setVisible(true);        
 
         // Start game
         court.reset();
+		
 	}
 	
 	public static void main(String[] args) {
-		Asteroid.importVocab("files/vocab_test.txt");
 		SwingUtilities.invokeLater(new Game());
 	}
 	
