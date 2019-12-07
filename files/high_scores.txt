@@ -1,1 +1,1 @@
-Player	100
+Player3	300

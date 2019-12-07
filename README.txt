@@ -43,3 +43,5 @@ PennKey: auyang
 
 - Cite any external resources (libraries, images, tutorials, etc.) that you may
   have used while implementing your game.
+  
+  Special thanks to Mia Kim for the asteroid graphics!

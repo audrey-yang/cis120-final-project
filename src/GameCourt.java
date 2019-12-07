@@ -1,5 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -14,46 +18,56 @@ public class GameCourt extends JPanel {
 	
     // the state of the game logic
     private Asteroid asteroid; 
-    private int level = 0;
+    private int asteroidCounter = 0;
+    private int level = 1;
     private int lives = 3;
     private int score = 0;
-
+    private int scoreToAdd = 100;
+   
     public boolean playing = false; // whether the game is running 
-    private JLabel status; // Current status text, i.e. "Running..."
+    //private JLabel status; // Current status text, i.e. "Running..."
     private JTextField userInput;
     private JButton enter;
+    private JTextField currentScore;
+    private JPanel lifeDisplay;
 
     // Game constants
     public static final int COURT_WIDTH = 1000;
     public static final int COURT_HEIGHT = 600;
-    public static final int SQUARE_VELOCITY = 4;
 
     // Update interval for timer, in milliseconds
-    public static final int INTERVAL = 35;
+    public static final int INTERVAL = 70;
 
-    public GameCourt(JLabel status, JTextField userInput, JButton enter) {
+    public GameCourt(JTextField userInput, JButton enter, JTextField currentScore, JPanel lifeDisplay) {
         /* 
          * creates border around the court area, JComponent method 
          * */
-    	this.status = status;
+    	setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    	
     	this.userInput = userInput;
     	this.enter = enter;
+    	this.currentScore = currentScore;
+    	this.lifeDisplay = lifeDisplay;
     	
-    	setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        
         enter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //Execute when button is pressed
-                if(userInput.getText().equals(asteroid.getWord())){
-                	//asteroid.vaporize();
-                	System.out.println("yeet");
+            	String guess = userInput.getText().toLowerCase();
+            	String answer = Asteroid.getWordFromDef(asteroid.getWord()).toLowerCase();
+            	if(guess.equals(answer)){
                 	userInput.setText("");
+                	score += scoreToAdd;
+                	currentScore.setText("Current Score: " + score);
+                	scoreToAdd = 100;
+                	changeAsteroid();
+                	asteroidCounter++;
+                	System.out.println(asteroidCounter + " " + level);
                 } else {
                 	userInput.setText("");
+                	scoreToAdd -= 10;
                 }
             }
         }); 
-
    
 
         /* 
@@ -69,6 +83,9 @@ public class GameCourt extends JPanel {
         });
         
         timer.start(); 
+        if (lives == 0) {
+        	timer.stop();
+        }
         
     }
 
@@ -77,13 +94,11 @@ public class GameCourt extends JPanel {
      */
     public void reset() {
     	playing = true;
-        status.setText("Running...");
         lives = 3;
-        level = 0;
+        level = 1;
         score = 0;
-        asteroid = new GrayAsteroid(level, COURT_WIDTH, COURT_HEIGHT);
-        
-        //textBox.setText("");
+        asteroid = new GrayAsteroid(level, (int) (Math.random() * 500) + 100, 
+        		COURT_WIDTH, COURT_HEIGHT);
     }
 
     /**
@@ -92,14 +107,47 @@ public class GameCourt extends JPanel {
     void tick() {
         if (playing) {
         	asteroid.move();
+        	currentScore.setText("Current Score: " + score);
+        	if (asteroidCounter == 5) level = 2;
+        	else if (asteroidCounter == 10) level = 3;
+        	else if (asteroidCounter == 15) level = 4;
+        	else if (asteroidCounter == 20) level = 5;
+        	else if (asteroidCounter == 25) level = 6;
+        	
+        	
+        	
+        	if (asteroid.getPy() > COURT_HEIGHT + 100 || asteroid.getPx() > COURT_WIDTH + 100) {
+        		lives--;
+        		changeAsteroid();
+        	} 
+ 
             // update the display
             repaint();
         }
+    }
+    
+    private void changeAsteroid() {
+    	if (asteroidCounter % level == 1) {
+    		asteroid = new RedAsteroid(COURT_WIDTH, COURT_HEIGHT);
+    	} else {
+    		asteroid = new GrayAsteroid(level, (int) Math.random() * 500 + 100, 
+    				COURT_WIDTH, COURT_HEIGHT);
+    	}
+		
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Image img = null;
+        try {
+            if (img == null) {
+                img = ImageIO.read(new File("files/galaxy.png"));
+            }
+        } catch (IOException e) {
+            System.out.println("Internal Error:" + e.getMessage());
+        }
+        g.drawImage(img, 0, 0, null);
         asteroid.draw(g);
     }
 

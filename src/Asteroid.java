@@ -117,15 +117,20 @@ public abstract class Asteroid {
     	vocab = new TreeMap<>();
     	while (fl.hasNext()) {
     		String[] words = fl.next().split("\t");
-    		vocab.put(words[0], words[1]);
+    		vocab.put(words[1], words[0]);
     	}
     }
     
     public static String generateWord() {
     	List<String> keys = new ArrayList<>(vocab.keySet());
     	Random r = new Random();
-    	return vocab.get(keys.get(r.nextInt(keys.size())));
+    	return keys.get(r.nextInt(keys.size()));
     	//TODO: check this
+    }
+    
+    public static String getWordFromDef(String def) {
+    	if (vocab.containsKey(def)) return vocab.get(def);
+    	return null;
     }
 
     /*
