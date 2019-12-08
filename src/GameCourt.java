@@ -27,7 +27,6 @@ public class GameCourt extends JPanel {
     public boolean playing = false; // whether the game is running 
     //private JLabel status; // Current status text, i.e. "Running..."
     private JTextField userInput;
-    private JButton enter;
     private JTextField currentScore;
     private JPanel lifeDisplay;
 
@@ -38,38 +37,48 @@ public class GameCourt extends JPanel {
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 70;
 
-    public GameCourt(JTextField userInput, JButton enter, JTextField currentScore, JPanel lifeDisplay) {
+    public GameCourt(JTextField userInput, JTextField currentScore, JPanel lifeDisplay) {
         /* 
          * creates border around the court area, JComponent method 
          * */
     	setBorder(BorderFactory.createLineBorder(Color.BLACK));
     	
     	this.userInput = userInput;
-    	this.enter = enter;
     	this.currentScore = currentScore;
     	this.lifeDisplay = lifeDisplay;
     	
-        enter.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //Execute when button is pressed
-            	String guess = userInput.getText().toLowerCase();
-            	String answer = Asteroid.getWordFromDef(asteroid.getWord()).toLowerCase();
-            	if(guess.equals(answer)){
-                	userInput.setText("");
-                	score += scoreToAdd;
-                	currentScore.setText("Current Score: " + score);
-                	scoreToAdd = 100;
-                	changeAsteroid();
-                	asteroidCounter++;
-                	System.out.println(asteroidCounter + " " + level);
-                } else {
-                	userInput.setText("");
-                	scoreToAdd -= 10;
+    	userInput.setFocusable(true);
+    	userInput.addKeyListener(new KeyAdapter() {
+    		boolean enterPressed = false;
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                	enterPressed = true;
+                } 
+            }
+            
+            public void keyReleased(KeyEvent e) {
+                if (enterPressed) {
+                	String guess = userInput.getText().toLowerCase();
+                	String answer = Asteroid.getWordFromDef(asteroid.getWord()).toLowerCase();
+                	if(guess.equals(answer)){
+                    	userInput.setText("");
+                    	score += scoreToAdd;
+                    	currentScore.setText("Current Score: " + score);
+                    	scoreToAdd = 100;
+                    	changeAsteroid();
+                    	asteroidCounter++;
+                    	System.out.println(asteroidCounter + " " + level);
+                    } else {
+                    	userInput.setText("");
+                    	if (scoreToAdd >= 10) {
+                    		scoreToAdd -= 10;
+                    	}
+                    }
+                	enterPressed = false;
                 }
             }
-        }); 
-   
-
+    	});
+    	
         /* 
          * The timer is an object which triggers an action periodically with the given INTERVAL. We
          * register an ActionListener with this timer, whose actionPerformed() method is called each
@@ -83,7 +92,7 @@ public class GameCourt extends JPanel {
         });
         
         timer.start(); 
-        if (lives == 0) {
+        if (lives == 0 || asteroidCounter == 30) {
         	timer.stop();
         }
         
@@ -99,6 +108,8 @@ public class GameCourt extends JPanel {
         score = 0;
         asteroid = new GrayAsteroid(level, (int) (Math.random() * 500) + 100, 
         		COURT_WIDTH, COURT_HEIGHT);
+        userInput.setText("");
+        //lifeDisplay.reset();
     }
 
     /**
@@ -114,10 +125,9 @@ public class GameCourt extends JPanel {
         	else if (asteroidCounter == 20) level = 5;
         	else if (asteroidCounter == 25) level = 6;
         	
-        	
-        	
         	if (asteroid.getPy() > COURT_HEIGHT + 100 || asteroid.getPx() > COURT_WIDTH + 100) {
         		lives--;
+        		changeLives();
         		changeAsteroid();
         	} 
  
@@ -127,13 +137,26 @@ public class GameCourt extends JPanel {
     }
     
     private void changeAsteroid() {
-    	if (asteroidCounter % level == 1) {
+    	if ((int) (Math.random() * 6) + 1 == 5) {
     		asteroid = new RedAsteroid(COURT_WIDTH, COURT_HEIGHT);
     	} else {
-    		asteroid = new GrayAsteroid(level, (int) Math.random() * 500 + 100, 
+    		asteroid = new GrayAsteroid(level, (int) (Math.random() * 500) + 100, 
     				COURT_WIDTH, COURT_HEIGHT);
     	}
 		
+    }
+    
+    private void changeLives() {
+    	Lives l = new Lives(lives);
+    	lifeDisplay.add(l);
+    }
+    
+    public int getAsteroidCount() {
+    	return asteroidCounter;
+    }
+    
+    public int getScore() {
+    	return score;
     }
 
     @Override
@@ -149,6 +172,7 @@ public class GameCourt extends JPanel {
         }
         g.drawImage(img, 0, 0, null);
         asteroid.draw(g);
+        new Lives(lives).draw(g);
     }
 
     @Override

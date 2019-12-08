@@ -66,7 +66,7 @@ public class Game implements Runnable {
 		
 		// Top-level frame in which game components live
         final JFrame frame = new JFrame("Gravity");
-        frame.setBackground(Color.CYAN);
+        frame.setBackground(Color.BLACK);
         frame.setLocation(100, 100);
         frame.setResizable(false);
 
@@ -77,13 +77,12 @@ public class Game implements Runnable {
         
         //user input stuffs
         final JPanel textEnter = new JPanel();
+        textEnter.setBackground(Color.BLACK);
         frame.add(textEnter, BorderLayout.SOUTH);
         final JTextField userInput = new JTextField("");
-        userInput.setPreferredSize(new Dimension(100, 20));
+        userInput.setPreferredSize(new Dimension(200, 20));
         userInput.setEditable(true);
         textEnter.add(userInput);
-        final JButton enter = new JButton("Go!");
-        textEnter.add(enter);
         
         // Status panel
         /*final JPanel status_panel = new JPanel();
@@ -93,12 +92,14 @@ public class Game implements Runnable {
         
         //top panel
         final JPanel north = new JPanel();
+        north.setBackground(Color.BLACK);
         frame.add(north, BorderLayout.NORTH);
         north.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         
         // score display
         final JPanel scores = new JPanel();
+        scores.setBackground(Color.BLACK);
         final JTextField currentScoreDisplay = new JTextField("Current Score: ");
         currentScoreDisplay.setEditable(false);
         currentScoreDisplay.setSize(150, 50);
@@ -106,7 +107,7 @@ public class Game implements Runnable {
         final JTextField highScoreDisplay = 
         		new JTextField("High Score: " + this.getHighScorer() + ", " + this.getHighScore());
         highScoreDisplay.setEditable(false);
-        highScoreDisplay.setSize(150, 30);
+        highScoreDisplay.setSize(175, 30);
         scores.setLayout(new BoxLayout(scores, BoxLayout.PAGE_AXIS));
         scores.add(currentScoreDisplay);
         scores.add(highScoreDisplay);
@@ -119,19 +120,20 @@ public class Game implements Runnable {
         
         // Reset button
         final JPanel control_panel = new JPanel();
+        control_panel.setBackground(Color.BLACK);
         c.fill = GridBagConstraints.CENTER;
         north.add(control_panel, c);
         
         // lives display
         final JPanel lives = new JPanel();
-        lives.add(new JButton("noooooo"));
+        lives.setBackground(Color.black);
         c.fill = GridBagConstraints.FIRST_LINE_END;
         //c.gridx = 10;
         //c.gridy = 0;
         north.add(lives, c);
         
         // Main playing area
-        final GameCourt court = new GameCourt(userInput, enter, currentScoreDisplay, lives);
+        final GameCourt court = new GameCourt(userInput, currentScoreDisplay, lives);
         //court.setBackground(Color.BLACK);
         frame.add(court, BorderLayout.CENTER);
         
@@ -155,6 +157,22 @@ public class Game implements Runnable {
 
         // Start game
         court.reset();
+        
+        if (court.getAsteroidCount() == 30) {
+        	if (court.getScore() > highScore) {
+        		boolean goOn = false;
+        		
+        		while (!goOn) {
+        			String name = JOptionPane.showInputDialog(null, 
+        					"New High Score! Please enter your name.");
+        			if (name == null) {
+        				System.exit(0);
+        			}
+        			
+        			this.setHighScore(name, court.getScore());
+        		}
+        	}
+        }
 		
 	}
 	

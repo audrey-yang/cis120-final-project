@@ -16,14 +16,14 @@ public class RedAsteroid extends Asteroid {
     private static BufferedImage img;
     
 	public RedAsteroid(int courtWidth, int courtHeight) {
-		super(2, 9, INIT_POS_X, INIT_POS_Y, SIZE, SIZE, courtWidth, courtHeight);
+		super(2, 12, INIT_POS_X, INIT_POS_Y, SIZE, SIZE, courtWidth, courtHeight);
 		
 		try {
             if (img == null) {
                 img = ImageIO.read(new File(IMG_FILE));
             }
         } catch (IOException e) {
-            System.out.println("Internal Error:" + e.getMessage());
+        	System.out.println("Not a valid path!");
         }
 	}
 
@@ -31,7 +31,7 @@ public class RedAsteroid extends Asteroid {
 	public void draw(Graphics g) {
 		g.drawImage(img, this.getPx(), this.getPy(), this.getWidth(), this.getHeight(), null);
         g.setColor(Color.BLACK);
-        g.drawString(this.getWord(), this.getPx() + SIZE/3, this.getPy() + SIZE/2);
+        g.drawString(this.getWord(), this.getPx() + SIZE/4, this.getPy() + SIZE/2);
 	}
 
 }

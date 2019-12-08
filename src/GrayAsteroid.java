@@ -23,7 +23,7 @@ public class GrayAsteroid extends Asteroid {
                 img = ImageIO.read(new File(IMG_FILE));
             }
         } catch (IOException e) {
-            System.out.println("Internal Error:" + e.getMessage());
+        	System.out.println("Not a valid path!");
         }
 	}
 
