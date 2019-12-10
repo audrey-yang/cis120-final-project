@@ -15,26 +15,26 @@ public class Lives extends JComponent {
 	public void draw(Graphics g) {
 		if (lives == 3) {
 			g.setColor(Color.RED);
-	        g.fillOval(0, 0, 15, 15);
-	        g.fillOval(15, 0, 15, 15);
-	        g.fillOval(30, 0, 15, 15);
+	        g.fillOval(5, 3, 30, 30);
+	        g.fillOval(40, 3, 30, 30);
+	        g.fillOval(75, 3, 30, 30);
 		} else if (lives == 2) {
 			g.setColor(Color.RED);
-	        g.fillOval(0, 0, 15, 15);
-	        g.fillOval(15, 0, 15, 15);
+			g.fillOval(5, 3, 30, 30);
+	        g.fillOval(40, 3, 30, 30);
 	        g.setColor(Color.DARK_GRAY);
-	        g.fillOval(30, 0, 15, 15);
+	        g.fillOval(75, 3, 30, 30);
 		} else if (lives == 1) {
 			g.setColor(Color.RED);
-	        g.fillOval(0, 0, 15, 15);
-	        g.setColor(Color.DARK_GRAY);
-	        g.fillOval(15, 0, 15, 15);
-	        g.fillOval(30, 0, 15, 15);
+			g.fillOval(5, 3, 30, 30);
+			g.setColor(Color.DARK_GRAY);
+	        g.fillOval(40, 3, 30, 30);
+	        g.fillOval(75, 3, 30, 30);
 		} else {
 			g.setColor(Color.DARK_GRAY);
-	        g.fillOval(0, 0, 15, 15);
-	        g.fillOval(15, 0, 15, 15);
-	        g.fillOval(30, 0, 15, 15);
+			g.fillOval(5, 3, 30, 30);
+	        g.fillOval(40, 3, 30, 30);
+	        g.fillOval(75, 3, 30, 30);
 		}
 	}
 }

@@ -2,26 +2,30 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.*;
 
 public class Game implements Runnable {
 	
 	private static final String HIGH_SCORES_FILE = "files/high_scores.txt";
-	private int highScore; 
-	private String highScorer;
+	private static int highScore; 
+	private static String highScorer;
 	
-	public int getHighScore() {
+	/*
+	 * SET HIGH SCORE METHODS
+	 * */
+	public static int getHighScore() {
 		return highScore;
 	}
 	
-	public String getHighScorer() {
+	public static String getHighScorer() {
 		return highScorer;
 	}
 	
-	public void setHighScore(String name, int score) {
+	/*
+	 * Writes high score and high scorer to the file
+	 * */
+	public static  void setHighScore(String name, int score) {
 		try {
             FileWriter fw = new FileWriter(HIGH_SCORES_FILE);
             BufferedWriter bf = new BufferedWriter(fw);
@@ -32,7 +36,10 @@ public class Game implements Runnable {
         }
 	}
 	
-	public void readHighScores() {
+	/*
+	 * Reads high score and high scorer from the file
+	 * */
+	public static void readHighScores() {
 		FileLineIterator fl = new FileLineIterator(HIGH_SCORES_FILE);
     	if (!fl.hasNext()) {
     		highScorer = "No one yet!";
@@ -45,35 +52,46 @@ public class Game implements Runnable {
     	}
 	}
 	
-	public void run() {
-		//get file path
+	/*
+	 * Wrapper around the Asteroid method to get user input and filter out bad files
+	 * */
+	public void importFile() {
 		boolean okay = false;
 		
-		while (!okay) {
-			String filePath = JOptionPane.showInputDialog(null, "Enter the file path");
+		while (!okay) { 
+			String filePath = JOptionPane.showInputDialog(null, 
+					"Enter the file path (must be a .txt file)");
 			if (filePath == null) {
 				System.exit(0);
 			}
 			
-			try {
-				Asteroid.importVocab(filePath);
-			} catch (IllegalArgumentException e) {
-				JOptionPane.showMessageDialog(null, "Invalid file path!");
+			if (filePath.contains(".txt")) {
+				try {
+					Asteroid.importVocab(filePath);
+				} catch (IllegalArgumentException e) {
+					JOptionPane.showMessageDialog(null, "Invalid file path!");
+					continue;
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Must be a .txt file!");
 				continue;
 			}
+			
 			okay = true;
 		}
+	}
+	
+	/*
+	 * RUN FUNCTION - Lays out the game components, starts the game
+	 * */
+	public void run() {
+		importFile();
 		
 		// Top-level frame in which game components live
         final JFrame frame = new JFrame("Gravity");
         frame.setBackground(Color.BLACK);
         frame.setLocation(100, 100);
         frame.setResizable(false);
-
-        //south jpanel so input and running don't overlap
-        /*final JPanel south = new JPanel();
-        south.setLayout(new BoxLayout(south, BoxLayout.PAGE_AXIS));
-        frame.add(south, BorderLayout.SOUTH);*/
         
         //user input stuffs
         final JPanel textEnter = new JPanel();
@@ -83,61 +101,56 @@ public class Game implements Runnable {
         userInput.setPreferredSize(new Dimension(200, 20));
         userInput.setEditable(true);
         textEnter.add(userInput);
-        
-        // Status panel
-        /*final JPanel status_panel = new JPanel();
-        south.add(status_panel);
-        final JLabel status = new JLabel("Running...");
-        status_panel.add(status);*/
-        
+       
         //top panel
         final JPanel north = new JPanel();
+        north.setLayout(new GridBagLayout());
         north.setBackground(Color.BLACK);
         frame.add(north, BorderLayout.NORTH);
-        north.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         
         // score display
         final JPanel scores = new JPanel();
         scores.setBackground(Color.BLACK);
-        final JTextField currentScoreDisplay = new JTextField("Current Score: ");
+        scores.setLayout(new GridLayout());
+        final JTextField currentScoreDisplay = new JTextField("Current Score: 0");
         currentScoreDisplay.setEditable(false);
-        currentScoreDisplay.setSize(150, 50);
-        this.readHighScores();
+        currentScoreDisplay.setPreferredSize(new Dimension(200, 20));
+        readHighScores();
+        currentScoreDisplay.setBackground(Color.BLACK);
+        currentScoreDisplay.setForeground(Color.WHITE);
         final JTextField highScoreDisplay = 
-        		new JTextField("High Score: " + this.getHighScorer() + ", " + this.getHighScore());
+        		new JTextField("High Score: " + getHighScorer() + ", " + getHighScore());
+        
         highScoreDisplay.setEditable(false);
-        highScoreDisplay.setSize(175, 30);
-        scores.setLayout(new BoxLayout(scores, BoxLayout.PAGE_AXIS));
+        highScoreDisplay.setPreferredSize(new Dimension(200, 20));
+        highScoreDisplay.setForeground(Color.WHITE);
+        highScoreDisplay.setBackground(Color.BLACK);
+        
         scores.add(currentScoreDisplay);
         scores.add(highScoreDisplay);
-        
-        //sad
-        c.fill = GridBagConstraints.FIRST_LINE_START;
-        //c.gridx = -2;
-        //c.gridy = 0;
-        north.add(scores, c);
+        north.add(scores);
+        scores.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         // Reset button
         final JPanel control_panel = new JPanel();
         control_panel.setBackground(Color.BLACK);
-        c.fill = GridBagConstraints.CENTER;
-        north.add(control_panel, c);
+        north.add(control_panel);
+        control_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // lives display
-        final JPanel lives = new JPanel();
-        lives.setBackground(Color.black);
-        c.fill = GridBagConstraints.FIRST_LINE_END;
-        //c.gridx = 10;
-        //c.gridy = 0;
-        north.add(lives, c);
+        // level display
+        final JTextField level = new JTextField("Level: 1");
+        level.setEditable(false);
+        level.setBackground(Color.BLACK);
+        level.setForeground(Color.WHITE);
+        north.add(level);
+        level.setAlignmentX(Component.RIGHT_ALIGNMENT);
         
         // Main playing area
-        final GameCourt court = new GameCourt(userInput, currentScoreDisplay, lives);
-        //court.setBackground(Color.BLACK);
+        final GameCourt court = new GameCourt(userInput, currentScoreDisplay, 
+        		highScoreDisplay, level);
         frame.add(court, BorderLayout.CENTER);
         
-
         // Note here that when we add an action listener to the reset button, we define it as an
         // anonymous inner class that is an instance of ActionListener with its actionPerformed()
         // method overridden. When the button is pressed, actionPerformed() will be called.
@@ -148,7 +161,6 @@ public class Game implements Runnable {
             }
         });
         control_panel.add(reset);
-        
 
         // Put the frame on the screen
         frame.pack();
@@ -157,23 +169,6 @@ public class Game implements Runnable {
 
         // Start game
         court.reset();
-        
-        if (court.getAsteroidCount() == 30) {
-        	if (court.getScore() > highScore) {
-        		boolean goOn = false;
-        		
-        		while (!goOn) {
-        			String name = JOptionPane.showInputDialog(null, 
-        					"New High Score! Please enter your name.");
-        			if (name == null) {
-        				System.exit(0);
-        			}
-        			
-        			this.setHighScore(name, court.getScore());
-        		}
-        	}
-        }
-		
 	}
 	
 	public static void main(String[] args) {

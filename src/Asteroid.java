@@ -4,12 +4,9 @@ import java.util.*;
 public abstract class Asteroid {
 	
 	/*
-     * Current position of the object (in terms of graphics coordinates)
+     * Current position of the object 
      *  
-     * Coordinates are given by the upper-left hand corner of the object. This position should
-     * always be within bounds.
-     *  0 <= px <= maxX 
-     *  0 <= py <= maxY 
+     * Coordinates are given by the upper-left hand corner of the object. 
      */
     private int px; 
     private int py;
@@ -21,22 +18,15 @@ public abstract class Asteroid {
     /* Velocity: number of pixels to move every time move() is called. */
     private int vx;
     private int vy;
-
-    /* 
-     * Upper bounds of the area in which the object can be positioned. Maximum permissible x, y
-     * positions for the upper-left hand corner of the object.
-     */
-    private int maxX;
-    private int maxY;
     
     /*
-     * Map of vocabulary words taken from CSV file. 
+     * Map of vocabulary words taken from file. 
      */
     private static Map<String, String> vocab;
     private String word;
     
     /**
-     * Constructor
+     * CONSTRUCTOR
      */
     public Asteroid(int vy, int vx, int px, int py, int width, int height, int courtWidth,
         int courtHeight) {
@@ -47,11 +37,53 @@ public abstract class Asteroid {
         this.width  = width;
         this.height = height;
 
-        // take the width and height into account when setting the bounds for the upper left corner
-        // of the object.
-        this.maxX = courtWidth - width;
-        this.maxY = courtHeight - height;
         word = generateWord();
+    }
+    
+    /*
+     * VOCAB METHODS
+     * */
+    
+    /*
+     * Imports vocab from a .txt file.
+     * */
+    public static void importVocab(String filePath) {
+    	FileLineIterator fl = new FileLineIterator(filePath);
+    	vocab = new TreeMap<>();
+    	while (fl.hasNext()) {
+    		String[] words = fl.next().split("	");
+    		if (words.length < 2) {
+    			System.out.println("boo " + words[0]);
+    			throw new IllegalArgumentException();
+    		}
+    		vocab.put(words[1], words[0]);
+    	}
+    }
+    
+    /*
+     * Returns a copy of the vocab map.
+     * */
+    public static Map<String, String> getVocab() {
+    	Map<String, String> copy = new TreeMap<>();
+    	copy.putAll(vocab);
+    	return copy;
+    }
+    
+    /*
+     * Randomly generates a word to put on an asteroid.
+     * */
+    public static String generateWord() {
+    	List<String> keys = new ArrayList<>(vocab.keySet());
+    	Random r = new Random();
+    	return keys.get(r.nextInt(keys.size()));
+    }
+    
+    /*
+     * Helper method to get word from definition.
+     * */
+    public static String getWordFromDef(String def) {
+    	if (vocab.containsKey(def)) return vocab.get(def);
+    	return null;
     }
 
     /* 
@@ -90,72 +122,24 @@ public abstract class Asteroid {
      * */
     public void setPx(int px) {
         this.px = px;
-        clip();
     }
 
     public void setPy(int py) {
         this.py = py;
-        clip();
     }
     
     public void setVy(int vy) {
         this.vy = vy;
     }
-    
-    /*
-     * VOCAB METHODS
-     * */
-    
-    public static Map<String, String> getVocab() {
-    	Map<String, String> copy = new TreeMap<>();
-    	copy.putAll(vocab);
-    	return copy;
-    }
-    
-    public static void importVocab(String filePath) {
-    	FileLineIterator fl = new FileLineIterator(filePath);
-    	vocab = new TreeMap<>();
-    	while (fl.hasNext()) {
-    		String[] words = fl.next().split("\t");
-    		vocab.put(words[1], words[0]);
-    	}
-    }
-    
-    public static String generateWord() {
-    	List<String> keys = new ArrayList<>(vocab.keySet());
-    	Random r = new Random();
-    	return keys.get(r.nextInt(keys.size()));
-    	//TODO: check this
-    }
-    
-    public static String getWordFromDef(String def) {
-    	if (vocab.containsKey(def)) return vocab.get(def);
-    	return null;
-    }
-
     /*
      * MOVEMENT and DRAWING METHODS
      * */
-
+    
     /**
-     * Prevents the object from going outside of the bounds of the area designated for the object.
-     * (i.e. Object cannot go outside of the active area the user defines for it).
-     */ 
-    private void clip() {
-        this.px = Math.min(Math.max(this.px, 0), this.maxX);
-        this.py = Math.min(Math.max(this.py, 0), this.maxY);
-    }
-
-    /**
-     * Moves the object by its velocity.  Ensures that the object does not go outside its bounds by
-     * clipping.
+     * Moves the object
      */
-    public void move() {
-        this.py += this.vy;
-        this.px += this.vx;
-        //clip();
-    }
-
+    public abstract void move();
+    
     /**
      * Default draw method that provides how the object should be drawn in the GUI. This method does
      * not draw anything. Subclass should override this method based on how their object should
